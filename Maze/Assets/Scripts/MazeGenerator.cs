@@ -61,13 +61,14 @@ public class MazeGenerator : MonoBehaviour
                 //break;
             //previousCell = currentPath.Peek();
             (neighboursList, neighboursDic) = GetNeighbours(currentCell);
+            //Debug.Log(neighboursList.Count > 0);
             if (neighboursList.Count > 0)
             {
                 currentCell = neighboursList[Random.Range(0, neighboursList.Count)];
                 neighboursDic.TryGetValue(currentCell, out int wallDir);
-                RemoveWalls(currentCell, wallDir);
                 int oppositeWall = wallDir + 2 < 4 ? wallDir + 2 : wallDir - 2;
-                RemoveWalls(currentPath.Peek(), oppositeWall);
+                RemoveWalls(currentCell, oppositeWall);
+                RemoveWalls(currentPath.Peek(), wallDir);
                 currentPath.Push(currentCell);
             }
             else
@@ -115,7 +116,7 @@ public class MazeGenerator : MonoBehaviour
                 continue;
 
             MazeCell neighbour = mazeGrid[currentCell.x, neihbourY];
-            if(currentPath.Contains(neighbour))
+            if(currentPath.Contains(neighbour) || completedPath.Contains(neighbour))
                 continue;
 
             neighboursList.Add(neighbour);
@@ -126,7 +127,10 @@ public class MazeGenerator : MonoBehaviour
 
     void OnDrawGizmos()
     {
-        Gizmos.color = Color.red;
-        Gizmos.DrawSphere(currentCell.transform.position, 1f);
+        foreach (MazeCell cell in mazeGrid)
+        {
+            Gizmos.color = cell == currentCell ? Color.red : completedPath.Contains(cell) ? Color.blue : currentPath.Contains(cell) ? Color.yellow : Color.white;
+            Gizmos.DrawCube(cell.transform.position, new(.5f, .5f, .5f));
+        }
     }
 }
