@@ -5,6 +5,7 @@ using UnityEngine;
 public class MazeGenerator : MonoBehaviour
 {
     [SerializeField] MazeCell mazeCellPrefab;
+    Vector2 offset;
     [SerializeField] float mazeWidth;
     [SerializeField] float mazeHeight;
     int cellsAmountX => Mathf.FloorToInt(mazeWidth) / mazeCellDiameter;
@@ -12,19 +13,22 @@ public class MazeGenerator : MonoBehaviour
     int mazeCellRadius = 1;
     int mazeCellDiameter => mazeCellRadius * 2;
     MazeCell[,] mazeGrid;
-    Stack<MazeCell> currentPath = new();
-    List<MazeCell> completedPath = new();
-    MazeCell currentCell;
+    
+    Stack<MazeCell> currentPath;
+    List<MazeCell> completedPath;
 
     void Awake()
     {
+        offset = new(0, mazeHeight / 2 + 5);
         mazeGrid = new MazeCell[cellsAmountX, cellsAmountY];
+        currentPath = new(cellsAmountX * cellsAmountY);
+        completedPath = new(cellsAmountX * cellsAmountY);
     }
 
     void Start()
     {
         CreateGrid();
-        StartCoroutine(GenerateMaze());
+        GenerateMaze();
     }
 
     void CreateGrid()
@@ -37,7 +41,7 @@ public class MazeGenerator : MonoBehaviour
             {
                 float xPos = x * mazeCellDiameter + mazeCellRadius;
                 float yPos = y * mazeCellDiameter + mazeCellRadius;
-                Vector2 cellPos = new Vector2(xPos, yPos) + bottomLeftCorner;
+                Vector2 cellPos = new Vector2(xPos, yPos) + bottomLeftCorner + offset;
 
                 MazeCell newCell = Instantiate(mazeCellPrefab, cellPos, Quaternion.identity);
                 (newCell.x, newCell.y) = (x, y);
@@ -46,22 +50,17 @@ public class MazeGenerator : MonoBehaviour
         }
     }
 
-    IEnumerator GenerateMaze()
+    void GenerateMaze()
     {
-        currentCell = mazeGrid[5, 9];
+        MazeCell currentCell;
+        currentCell = mazeGrid[0, 0];
         currentPath.Push(currentCell);
         List<MazeCell> neighboursList;
         Dictionary<MazeCell, int> neighboursDic;
 
-        //int forceDone = 0;
         while(currentPath.Count > 0)
         {
-            //forceDone++;
-            //if(forceDone >= 100) 
-                //break;
-            //previousCell = currentPath.Peek();
             (neighboursList, neighboursDic) = GetNeighbours(currentCell);
-            //Debug.Log(neighboursList.Count > 0);
             if (neighboursList.Count > 0)
             {
                 currentCell = neighboursList[Random.Range(0, neighboursList.Count)];
@@ -79,13 +78,7 @@ public class MazeGenerator : MonoBehaviour
 
                 currentCell = currentPath.Peek();
             }
-            yield return null;
         }
-    }
-
-    void RemoveWalls(MazeCell cell, int wallDir)
-    {
-        cell.GetWall(wallDir).SetActive(false);
     }
 
     (List<MazeCell>, Dictionary<MazeCell, int>) GetNeighbours(MazeCell currentCell)
@@ -112,7 +105,7 @@ public class MazeGenerator : MonoBehaviour
         {
             int neihbourY = currentCell.y + y;
 
-            if(neihbourY < 0 || neihbourY >= cellsAmountX)
+            if(neihbourY < 0 || neihbourY >= cellsAmountY)
                 continue;
 
             MazeCell neighbour = mazeGrid[currentCell.x, neihbourY];
@@ -125,12 +118,14 @@ public class MazeGenerator : MonoBehaviour
         return (neighboursList, neighboursDic);
     }
 
-    void OnDrawGizmos()
-    {
-        foreach (MazeCell cell in mazeGrid)
-        {
-            Gizmos.color = cell == currentCell ? Color.red : completedPath.Contains(cell) ? Color.blue : currentPath.Contains(cell) ? Color.yellow : Color.white;
-            Gizmos.DrawCube(cell.transform.position, new(.5f, .5f, .5f));
-        }
-    }
+    void RemoveWalls(MazeCell cell, int wallDir) => cell.GetWall(wallDir).SetActive(false);
+    
+    // void OnDrawGizmos()
+    // {
+    //     foreach (MazeCell cell in mazeGrid)
+    //     {
+    //         Gizmos.color = cell == currentCell ? Color.red : completedPath.Contains(cell) ? Color.blue : currentPath.Contains(cell) ? Color.yellow : Color.white;
+    //         Gizmos.DrawCube(cell.transform.position, new(.5f, .5f, .5f));
+    //     }
+    // }
 }
