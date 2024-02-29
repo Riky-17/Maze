@@ -1,11 +1,12 @@
 using System.Collections;
 using System.Collections.Generic;
+using Unity.VisualScripting;
 using UnityEngine;
 
 public class MazeGenerator : MonoBehaviour
 {
-    [SerializeField] MazeCell mazeCellPrefab;
-    Vector2 offset;
+    [SerializeField] MazeCell[] mazeCellPrefabs;
+    Vector2 offset => new(0, mazeHeight / 2 + 5 + 7.5f);
     [SerializeField] float mazeWidth;
     [SerializeField] float mazeHeight;
     int cellsAmountX => Mathf.FloorToInt(mazeWidth) / mazeCellDiameter;
@@ -19,7 +20,7 @@ public class MazeGenerator : MonoBehaviour
 
     void Awake()
     {
-        offset = new(0, mazeHeight / 2 + 5);
+        //offset = new(0, mazeHeight / 2 + 5 + 7.5f);
         mazeGrid = new MazeCell[cellsAmountX, cellsAmountY];
         currentPath = new(cellsAmountX * cellsAmountY);
         completedPath = new(cellsAmountX * cellsAmountY);
@@ -43,8 +44,12 @@ public class MazeGenerator : MonoBehaviour
                 float yPos = y * mazeCellDiameter + mazeCellRadius;
                 Vector2 cellPos = new Vector2(xPos, yPos) + bottomLeftCorner + offset;
 
-                MazeCell newCell = Instantiate(mazeCellPrefab, cellPos, Quaternion.identity);
+                int mazeCellPrefabIndex = x == 0 || x == cellsAmountX - 1 || y == 0 || y == cellsAmountY - 1 ? 0 : 1;
+                MazeCell newCell = Instantiate(mazeCellPrefabs[mazeCellPrefabIndex], cellPos, Quaternion.identity);
                 (newCell.x, newCell.y) = (x, y);
+                if(mazeCellPrefabIndex == 0)
+                    FixEdgeWalls(newCell);
+                
                 mazeGrid[x, y] = newCell;
             }
         }
@@ -52,6 +57,8 @@ public class MazeGenerator : MonoBehaviour
 
     void GenerateMaze()
     {
+        RemoveEntranceWalls();
+
         MazeCell currentCell;
         currentCell = mazeGrid[0, 0];
         currentPath.Push(currentCell);
@@ -78,6 +85,45 @@ public class MazeGenerator : MonoBehaviour
 
                 currentCell = currentPath.Peek();
             }
+        }
+    }
+
+    void FixEdgeWalls(MazeCell cell)
+    {
+        if((cell.x == 0 || cell.x == cellsAmountX - 1) && (cell.y == 0 || cell.y == cellsAmountY - 1))
+            return;
+
+        List<Transform> cellWalls = cell.GetWalls();
+
+        if(cell.x == 0)
+            cellWalls[1].localScale += new Vector3(0, .2f, 0);
+        else if(cell.x == cellsAmountX - 1)
+            cellWalls[3].localScale += new Vector3(0, .2f, 0);
+
+        if(cell.y == 0)
+            cellWalls[0].localScale += new Vector3(.2f, 0, 0);
+        else if(cell.y == cellsAmountY - 1)
+            cellWalls[2].localScale += new Vector3(.2f, 0, 0);
+    }
+
+    void RemoveEntranceWalls()
+    {
+        MazeCell entranceCell;
+        int entranceCellx = cellsAmountX / 2;
+        // check if there are 2 entrance cells or 1
+        if (cellsAmountX % 2 == 0)
+        {
+            entranceCell = mazeGrid[entranceCellx - 1, 0];
+            RemoveWalls(entranceCell, 2);
+            RemoveWalls(entranceCell, 1);
+            entranceCell = mazeGrid[entranceCellx, 0];
+            RemoveWalls(entranceCell, 2);
+            RemoveWalls(entranceCell, 3);
+        }
+        else
+        {
+            entranceCell = mazeGrid[entranceCellx, 0];
+            RemoveWalls(entranceCell, 2);
         }
     }
 

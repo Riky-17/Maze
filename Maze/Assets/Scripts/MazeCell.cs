@@ -11,4 +11,5 @@ public class MazeCell : MonoBehaviour
     [HideInInspector] public int y;
 
     public GameObject GetWall(int i) => walls[i].gameObject;
+    public List<Transform> GetWalls() => walls;
 }
