@@ -60,7 +60,8 @@ public class MazeGenerator : MonoBehaviour
         RemoveEntranceWalls();
 
         MazeCell currentCell;
-        currentCell = mazeGrid[0, 0];
+        int exitPosX = Random.Range(0, cellsAmountX);
+        currentCell = mazeGrid[exitPosX, cellsAmountY - 1];
         currentPath.Push(currentCell);
         List<MazeCell> neighboursList;
         Dictionary<MazeCell, int> neighboursDic;
@@ -86,6 +87,7 @@ public class MazeGenerator : MonoBehaviour
                 currentCell = currentPath.Peek();
             }
         }
+        RemoveWalls(currentCell, 0);
     }
 
     void FixEdgeWalls(MazeCell cell)
@@ -170,7 +172,10 @@ public class MazeGenerator : MonoBehaviour
     // {
     //     foreach (MazeCell cell in mazeGrid)
     //     {
-    //         Gizmos.color = cell == currentCell ? Color.red : completedPath.Contains(cell) ? Color.blue : currentPath.Contains(cell) ? Color.yellow : Color.white;
+    //         Gizmos.color = cell == currentCell ? Color.red 
+    //                              : completedPath.Contains(cell) ? Color.blue 
+    //                              : currentPath.Contains(cell) ? Color.yellow 
+    //                              : Color.white;
     //         Gizmos.DrawCube(cell.transform.position, new(.5f, .5f, .5f));
     //     }
     // }
