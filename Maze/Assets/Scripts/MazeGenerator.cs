@@ -1,11 +1,12 @@
 using System.Collections;
 using System.Collections.Generic;
-using Unity.VisualScripting;
 using UnityEngine;
 
 public class MazeGenerator : MonoBehaviour
 {
     [SerializeField] MazeCell[] mazeCellPrefabs;
+    [SerializeField] Transform exitHall;
+    [SerializeField] LayerMask playerMask;
     Vector2 offset => new(0, mazeHeight / 2 + 5 + 7.5f);
     [SerializeField] float mazeWidth;
     [SerializeField] float mazeHeight;
@@ -17,6 +18,8 @@ public class MazeGenerator : MonoBehaviour
     
     Stack<MazeCell> currentPath;
     List<MazeCell> completedPath;
+
+    bool isPlayerInside = false;
 
     void Awake()
     {
@@ -30,6 +33,12 @@ public class MazeGenerator : MonoBehaviour
     {
         CreateGrid();
         GenerateMaze();
+    }
+
+    void FixedUpdate()
+    {
+        if(!isPlayerInside)
+            CheckPlayerInside();
     }
 
     void CreateGrid()
@@ -62,6 +71,7 @@ public class MazeGenerator : MonoBehaviour
         MazeCell currentCell;
         int exitPosX = Random.Range(0, cellsAmountX);
         currentCell = mazeGrid[exitPosX, cellsAmountY - 1];
+        exitHall.position = currentCell.transform.position + new Vector3(0, 5.8f, 0);
         currentPath.Push(currentCell);
         List<MazeCell> neighboursList;
         Dictionary<MazeCell, int> neighboursDic;
@@ -88,6 +98,30 @@ public class MazeGenerator : MonoBehaviour
             }
         }
         RemoveWalls(currentCell, 0);
+    }
+
+    void CheckPlayerInside()
+    {
+        Collider2D collider = Physics2D.OverlapBox((Vector2)transform.position + offset, new(mazeWidth, mazeHeight - 2), 0, playerMask);
+        if(collider == null)
+            return;
+
+        MazeCell entranceCell;
+        int entranceCellx = cellsAmountX / 2;
+        // check if there are 2 entrance cells or 1
+        if (cellsAmountX % 2 == 0)
+        {
+            entranceCell = mazeGrid[entranceCellx - 1, 0];
+            PlaceWalls(entranceCell, 2);
+            entranceCell = mazeGrid[entranceCellx, 0];
+            PlaceWalls(entranceCell, 2);
+        }
+        else
+        {
+            entranceCell = mazeGrid[entranceCellx, 0];
+            PlaceWalls(entranceCell, 2);
+        }
+        isPlayerInside = true;
     }
 
     void FixEdgeWalls(MazeCell cell)
@@ -167,6 +201,7 @@ public class MazeGenerator : MonoBehaviour
     }
 
     void RemoveWalls(MazeCell cell, int wallDir) => cell.GetWall(wallDir).SetActive(false);
+    void PlaceWalls(MazeCell cell, int wallDir) => cell.GetWall(wallDir).SetActive(true);
     
     // void OnDrawGizmos()
     // {
