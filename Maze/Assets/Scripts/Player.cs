@@ -9,6 +9,8 @@ public class Player : MonoBehaviour
     float speed = 10;
     float acceleration = 7;
     float deceleration = 10;
+    float rotationSpeed = 6;
+    float RotationVelocity => rotationSpeed * 90; //90 stands for the degrees
     
     void Awake()
     {
@@ -18,6 +20,8 @@ public class Player : MonoBehaviour
     void Update()
     {
         CheckMoveInput();
+        if(moveDir != Vector2.zero)
+            RotatePlayer();
     }
 
     void FixedUpdate()
@@ -27,6 +31,12 @@ public class Player : MonoBehaviour
         float accelRate = velocityInput != Vector2.zero ? acceleration : deceleration;
         Vector2 force = velocityDiff * accelRate;
         rb.AddForce(force);
+    }
+
+    void RotatePlayer()
+    {
+        Quaternion lookDir = Quaternion.LookRotation(transform.forward, moveDir);
+        transform.rotation = Quaternion.RotateTowards(transform.rotation, lookDir, RotationVelocity * Time.deltaTime);
     }
 
     void CheckMoveInput()

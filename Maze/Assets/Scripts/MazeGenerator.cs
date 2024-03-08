@@ -23,7 +23,6 @@ public class MazeGenerator : MonoBehaviour
 
     void Awake()
     {
-        //offset = new(0, mazeHeight / 2 + 5 + 7.5f);
         mazeGrid = new MazeCell[cellsAmountX, cellsAmountY];
         currentPath = new(cellsAmountX * cellsAmountY);
         completedPath = new(cellsAmountX * cellsAmountY);
