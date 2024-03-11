@@ -7,13 +7,15 @@ public class MazeGenerator : MonoBehaviour
     [SerializeField] MazeCell[] mazeCellPrefabs;
     [SerializeField] Transform exitHall;
     [SerializeField] LayerMask playerMask;
-    Vector2 offset => new(0, mazeHeight / 2 + 5 + 7.5f);
+    Vector2 Offset => new(0, RoundedHeight / 2 + 5 + 7.5f);
     [SerializeField] float mazeWidth;
+    int RoundedWidth => Mathf.FloorToInt(mazeWidth);
     [SerializeField] float mazeHeight;
-    int cellsAmountX => Mathf.FloorToInt(mazeWidth) / mazeCellDiameter;
-    int cellsAmountY => Mathf.FloorToInt(mazeHeight) / mazeCellDiameter;
+    int RoundedHeight => Mathf.FloorToInt(mazeHeight);
+    int CellsAmountX => RoundedWidth / MazeCellDiameter;
+    int CellsAmountY => RoundedHeight / MazeCellDiameter;
     int mazeCellRadius = 1;
-    int mazeCellDiameter => mazeCellRadius * 2;
+    int MazeCellDiameter => mazeCellRadius * 2;
     MazeCell[,] mazeGrid;
     
     Stack<MazeCell> currentPath;
@@ -23,9 +25,9 @@ public class MazeGenerator : MonoBehaviour
 
     void Awake()
     {
-        mazeGrid = new MazeCell[cellsAmountX, cellsAmountY];
-        currentPath = new(cellsAmountX * cellsAmountY);
-        completedPath = new(cellsAmountX * cellsAmountY);
+        mazeGrid = new MazeCell[CellsAmountX, CellsAmountY];
+        currentPath = new(CellsAmountX * CellsAmountY);
+        completedPath = new(CellsAmountX * CellsAmountY);
     }
 
     void Start()
@@ -42,17 +44,17 @@ public class MazeGenerator : MonoBehaviour
 
     void CreateGrid()
     {
-        Vector2 bottomLeftCorner = new(-cellsAmountX, -cellsAmountY);
+        Vector2 bottomLeftCorner = new(-CellsAmountX, -CellsAmountY);
 
-        for (int x = 0; x < cellsAmountX; x++)
+        for (int x = 0; x < CellsAmountX; x++)
         {
-            for (int y = 0; y < cellsAmountY; y++)
+            for (int y = 0; y < CellsAmountY; y++)
             {
-                float xPos = x * mazeCellDiameter + mazeCellRadius;
-                float yPos = y * mazeCellDiameter + mazeCellRadius;
-                Vector2 cellPos = new Vector2(xPos, yPos) + bottomLeftCorner + offset;
+                float xPos = x * MazeCellDiameter + mazeCellRadius;
+                float yPos = y * MazeCellDiameter + mazeCellRadius;
+                Vector2 cellPos = new Vector2(xPos, yPos) + bottomLeftCorner + Offset;
 
-                int mazeCellPrefabIndex = x == 0 || x == cellsAmountX - 1 || y == 0 || y == cellsAmountY - 1 ? 0 : 1;
+                int mazeCellPrefabIndex = x == 0 || x == CellsAmountX - 1 || y == 0 || y == CellsAmountY - 1 ? 0 : 1;
                 MazeCell newCell = Instantiate(mazeCellPrefabs[mazeCellPrefabIndex], cellPos, Quaternion.identity);
                 (newCell.x, newCell.y) = (x, y);
                 if(mazeCellPrefabIndex == 0)
@@ -68,8 +70,8 @@ public class MazeGenerator : MonoBehaviour
         RemoveEntranceWalls();
 
         MazeCell currentCell;
-        int exitPosX = Random.Range(0, cellsAmountX);
-        currentCell = mazeGrid[exitPosX, cellsAmountY - 1];
+        int exitPosX = Random.Range(0, CellsAmountX);
+        currentCell = mazeGrid[exitPosX, CellsAmountY - 1];
         exitHall.position = currentCell.transform.position + new Vector3(0, 5.8f, 0);
         currentPath.Push(currentCell);
         List<MazeCell> neighboursList;
@@ -101,14 +103,14 @@ public class MazeGenerator : MonoBehaviour
 
     void CheckPlayerInside()
     {
-        Collider2D collider = Physics2D.OverlapBox((Vector2)transform.position + offset, new(mazeWidth, mazeHeight - 2), 0, playerMask);
+        Collider2D collider = Physics2D.OverlapBox((Vector2)transform.position + Offset, new(RoundedWidth, RoundedHeight - 2), 0, playerMask);
         if(collider == null)
             return;
 
         MazeCell entranceCell;
-        int entranceCellx = cellsAmountX / 2;
+        int entranceCellx = CellsAmountX / 2;
         // check if there are 2 entrance cells or 1
-        if (cellsAmountX % 2 == 0)
+        if (CellsAmountX % 2 == 0)
         {
             entranceCell = mazeGrid[entranceCellx - 1, 0];
             PlaceWalls(entranceCell, 2);
@@ -125,28 +127,28 @@ public class MazeGenerator : MonoBehaviour
 
     void FixEdgeWalls(MazeCell cell)
     {
-        if((cell.x == 0 || cell.x == cellsAmountX - 1) && (cell.y == 0 || cell.y == cellsAmountY - 1))
+        if((cell.x == 0 || cell.x == CellsAmountX - 1) && (cell.y == 0 || cell.y == CellsAmountY - 1))
             return;
 
         List<Transform> cellWalls = cell.GetWalls();
 
         if(cell.x == 0)
             cellWalls[1].localScale += new Vector3(0, .2f, 0);
-        else if(cell.x == cellsAmountX - 1)
+        else if(cell.x == CellsAmountX - 1)
             cellWalls[3].localScale += new Vector3(0, .2f, 0);
 
         if(cell.y == 0)
             cellWalls[0].localScale += new Vector3(.2f, 0, 0);
-        else if(cell.y == cellsAmountY - 1)
+        else if(cell.y == CellsAmountY - 1)
             cellWalls[2].localScale += new Vector3(.2f, 0, 0);
     }
 
     void RemoveEntranceWalls()
     {
         MazeCell entranceCell;
-        int entranceCellx = cellsAmountX / 2;
+        int entranceCellx = CellsAmountX / 2;
         // check if there are 2 entrance cells or 1
-        if (cellsAmountX % 2 == 0)
+        if (CellsAmountX % 2 == 0)
         {
             entranceCell = mazeGrid[entranceCellx - 1, 0];
             RemoveWalls(entranceCell, 2);
@@ -171,7 +173,7 @@ public class MazeGenerator : MonoBehaviour
         {
             int neihbourX = currentCell.x + x;
 
-            if(neihbourX < 0 || neihbourX >= cellsAmountX)
+            if(neihbourX < 0 || neihbourX >= CellsAmountX)
                 continue;
 
             MazeCell neighbour = mazeGrid[neihbourX, currentCell.y];
@@ -186,7 +188,7 @@ public class MazeGenerator : MonoBehaviour
         {
             int neihbourY = currentCell.y + y;
 
-            if(neihbourY < 0 || neihbourY >= cellsAmountY)
+            if(neihbourY < 0 || neihbourY >= CellsAmountY)
                 continue;
 
             MazeCell neighbour = mazeGrid[currentCell.x, neihbourY];
