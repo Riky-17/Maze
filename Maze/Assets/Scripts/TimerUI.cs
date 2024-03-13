@@ -1,3 +1,4 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using TMPro;
@@ -7,6 +8,7 @@ public class TimerUI : MonoBehaviour
 {
     [SerializeField] TextMeshProUGUI timerText;
     float elapsedTime;
+    int prevSecond;
 
     void Update()
     {
@@ -15,10 +17,11 @@ public class TimerUI : MonoBehaviour
 
         elapsedTime += Time.deltaTime;
         int seconds = Mathf.FloorToInt(elapsedTime % 60);
-        int minutes = Mathf.FloorToInt(elapsedTime / 60); 
-        timerText.text = minutes > 9 && seconds > 9 ? $"{minutes}:{seconds}" 
-                       : minutes < 10 && seconds > 9 ? $"0{minutes}:{seconds}" 
-                       : minutes > 9 && seconds < 10 ? $"{minutes}:0{seconds}" 
-                       : $"0{minutes}:0{seconds}";
+        int minutes = Mathf.FloorToInt(elapsedTime / 60);
+        if(prevSecond != seconds)
+        {
+            timerText.text = $"{minutes:00}:{seconds:00}";
+            prevSecond = seconds;
+        }
     }
 }
