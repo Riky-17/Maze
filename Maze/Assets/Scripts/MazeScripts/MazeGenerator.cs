@@ -8,9 +8,9 @@ public class MazeGenerator : MonoBehaviour
     [SerializeField] Transform exitHall;
     [SerializeField] LayerMask playerMask;
     Vector2 Offset => new(0, RoundedHeight / 2 + 5 + 7.5f);
-    [SerializeField] float mazeWidth;
+    float mazeWidth;
     int RoundedWidth => Mathf.FloorToInt(mazeWidth);
-    [SerializeField] float mazeHeight;
+    float mazeHeight;
     int RoundedHeight => Mathf.FloorToInt(mazeHeight);
     int CellsAmountX => RoundedWidth / MazeCellDiameter;
     int CellsAmountY => RoundedHeight / MazeCellDiameter;
@@ -25,6 +25,8 @@ public class MazeGenerator : MonoBehaviour
 
     void Awake()
     {
+        mazeWidth = GameManager.Instance.MazeWidth;
+        mazeHeight = GameManager.Instance.MazeHeight;
         mazeGrid = new MazeCell[CellsAmountX, CellsAmountY];
         currentPath = new(CellsAmountX * CellsAmountY);
         completedPath = new(CellsAmountX * CellsAmountY);

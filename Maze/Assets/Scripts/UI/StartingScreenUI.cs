@@ -5,6 +5,8 @@ using UnityEngine.UI;
 
 public class StartingScreenUI : MonoBehaviour
 {
+    [SerializeField] GameObject difficultySelectionScreen;
+
     [SerializeField] Button startGameButton;
     [SerializeField] Button exitGameButton;
 
@@ -12,7 +14,8 @@ public class StartingScreenUI : MonoBehaviour
     {
         startGameButton.onClick.AddListener(() => 
         {
-            SceneLoader.LoadScene(Scenes.Maze);
+            difficultySelectionScreen.SetActive(true);
+            gameObject.SetActive(false);
         });
 
         exitGameButton.onClick.AddListener(() => 
