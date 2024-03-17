@@ -6,6 +6,7 @@ using UnityEngine.UI;
 public class DifficultySelectionUI : MonoBehaviour
 {
     [SerializeField] GameObject startingScreen;
+    [SerializeField] GameObject customSizeScreen;
 
     [SerializeField] Button easyButton;
     [SerializeField] Button mediumButton;
@@ -35,7 +36,8 @@ public class DifficultySelectionUI : MonoBehaviour
         
         customButton.onClick.AddListener(() =>
         {
-            GameManager.Instance.SetDifficulty(Difficulties.Custom);
+            customSizeScreen.SetActive(true);
+            gameObject.SetActive(false);
         });
 
         backButton.onClick.AddListener(() =>

@@ -8,8 +8,8 @@ public class GameManager : MonoBehaviour
     public static GameManager Instance {get; private set;}
 
     public Difficulties difficulty {get; private set;}
-    public float MazeWidth {get; private set;}
-    public float MazeHeight {get; private set;}
+    public int MazeWidth {get; private set;}
+    public int MazeHeight {get; private set;}
 
     public static event Action<bool> onPauseToggle;
     bool isPaused = false;
@@ -49,18 +49,24 @@ public class GameManager : MonoBehaviour
         SetMazeSize();
     }
 
+    public void SetCustomSize(int mazeWidth, int mazeHeight)
+    {
+        MazeWidth = mazeWidth;
+        MazeHeight = mazeHeight;
+    }
+
     void SetMazeSize()
     {
         switch (difficulty)
         {
             case Difficulties.Easy:
-            MazeHeight = MazeWidth = 20;
+            MazeHeight = MazeWidth = 15;
             break;
             case Difficulties.Medium:
-            MazeHeight = MazeWidth = 50;
+            MazeHeight = MazeWidth = 30;
             break;
             case Difficulties.Hard:
-            MazeHeight = MazeWidth = 100;
+            MazeHeight = MazeWidth = 50;
             break;
         }
     }
