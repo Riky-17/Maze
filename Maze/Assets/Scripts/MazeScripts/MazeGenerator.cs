@@ -4,6 +4,8 @@ using UnityEngine;
 
 public class MazeGenerator : MonoBehaviour
 {
+    public static MazeGenerator Instance {get; private set;}
+
     [SerializeField] MazeCell[] mazeCellPrefabs;
     [SerializeField] Transform exitHall;
     [SerializeField] LayerMask playerMask;
@@ -17,10 +19,12 @@ public class MazeGenerator : MonoBehaviour
     Stack<MazeCell> currentPath;
     List<MazeCell> completedPath;
 
-    bool isPlayerInside = false;
+    public bool IsPlayerInside {get; private set;} = false;
 
     void Awake()
     {
+        Instance = this;
+
         mazeWidth = GameManager.Instance.MazeWidth;
         mazeHeight = GameManager.Instance.MazeHeight;
         mazeGrid = new MazeCell[mazeWidth, mazeHeight];
@@ -36,7 +40,7 @@ public class MazeGenerator : MonoBehaviour
 
     void FixedUpdate()
     {
-        if(!isPlayerInside)
+        if(!IsPlayerInside)
             CheckPlayerInside();
     }
 
@@ -120,7 +124,7 @@ public class MazeGenerator : MonoBehaviour
             entranceCell = mazeGrid[entranceCellx, 0];
             PlaceWalls(entranceCell, 2);
         }
-        isPlayerInside = true;
+        IsPlayerInside = true;
     }
 
     void FixEdgeWalls(MazeCell cell)

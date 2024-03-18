@@ -4,6 +4,7 @@ using UnityEngine;
 
 public class Player : MonoBehaviour
 {
+    [SerializeField] GameObject signal;
     Rigidbody2D rb;
     Vector2 moveDir;
     float speed = 10;
@@ -11,10 +12,12 @@ public class Player : MonoBehaviour
     float deceleration = 10;
     float rotationSpeed = 6;
     float RotationVelocity => rotationSpeed * 90; //90 stands for the degrees
+    int signalsAmount;
     
     void Awake()
     {
         rb = GetComponent<Rigidbody2D>();
+        signalsAmount = (int)(Mathf.Round(GameManager.Instance.MazeHeight * GameManager.Instance.MazeWidth / 50f / 5) * 5);
     }
 
     void Update()
@@ -22,6 +25,8 @@ public class Player : MonoBehaviour
         CheckMoveInput();
         if(moveDir != Vector2.zero)
             RotatePlayer();
+        if(Input.GetKeyDown(KeyCode.Space) && MazeGenerator.Instance.IsPlayerInside)
+            PlaceSignal();
     }
 
     void FixedUpdate()
@@ -31,6 +36,15 @@ public class Player : MonoBehaviour
         float accelRate = velocityInput != Vector2.zero ? acceleration : deceleration;
         Vector2 force = velocityDiff * accelRate;
         rb.AddForce(force);
+    }
+
+    void PlaceSignal()
+    {
+        if(signalsAmount <= 0)
+            return;
+
+        Instantiate(signal, new Vector3(0, 0, .1f) + transform.position, Quaternion.identity);
+        signalsAmount--;
     }
 
     void RotatePlayer()
