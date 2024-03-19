@@ -1,3 +1,4 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
@@ -5,6 +6,7 @@ using UnityEngine;
 public class Player : MonoBehaviour
 {
     [SerializeField] GameObject signal;
+    public static event Action<int> onSignalUpdate;
     Rigidbody2D rb;
     Vector2 moveDir;
     float speed = 10;
@@ -18,6 +20,11 @@ public class Player : MonoBehaviour
     {
         rb = GetComponent<Rigidbody2D>();
         signalsAmount = (int)(Mathf.Round(GameManager.Instance.MazeHeight * GameManager.Instance.MazeWidth / 50f / 5) * 5);
+    }
+
+    void Start()
+    {
+        onSignalUpdate?.Invoke(signalsAmount);
     }
 
     void Update()
@@ -45,6 +52,7 @@ public class Player : MonoBehaviour
 
         Instantiate(signal, new Vector3(0, 0, .1f) + transform.position, Quaternion.identity);
         signalsAmount--;
+        onSignalUpdate?.Invoke(signalsAmount);
     }
 
     void RotatePlayer()
