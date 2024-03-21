@@ -1,3 +1,4 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
@@ -5,6 +6,8 @@ using UnityEngine;
 public class MazeGenerator : MonoBehaviour
 {
     public static MazeGenerator Instance {get; private set;}
+
+    public static event Action onWin;
 
     [SerializeField] MazeCell[] mazeCellPrefabs;
     [SerializeField] Transform exitHall;
@@ -42,6 +45,8 @@ public class MazeGenerator : MonoBehaviour
     {
         if(!IsPlayerInside)
             CheckPlayerInside();
+
+        CheckExit();
     }
 
     void CreateGrid()
@@ -72,7 +77,7 @@ public class MazeGenerator : MonoBehaviour
         RemoveEntranceWalls();
 
         MazeCell currentCell;
-        int exitPosX = Random.Range(0, mazeWidth);
+        int exitPosX = UnityEngine.Random.Range(0, mazeWidth);
         currentCell = mazeGrid[exitPosX, mazeHeight - 1];
         exitHall.position = currentCell.transform.position + new Vector3(0, 5.8f, 0);
         currentPath.Push(currentCell);
@@ -84,7 +89,7 @@ public class MazeGenerator : MonoBehaviour
             (neighboursList, neighboursDic) = GetNeighbours(currentCell);
             if (neighboursList.Count > 0)
             {
-                currentCell = neighboursList[Random.Range(0, neighboursList.Count)];
+                currentCell = neighboursList[UnityEngine.Random.Range(0, neighboursList.Count)];
                 neighboursDic.TryGetValue(currentCell, out int wallDir);
                 int oppositeWall = wallDir + 2 < 4 ? wallDir + 2 : wallDir - 2;
                 RemoveWalls(currentCell, oppositeWall);
@@ -101,6 +106,15 @@ public class MazeGenerator : MonoBehaviour
             }
         }
         RemoveWalls(currentCell, 0);
+    }
+
+    void CheckExit()
+    {
+        Collider2D collider = Physics2D.OverlapBox((Vector2)exitHall.transform.position, new(10, 1), 0, playerMask);
+        if(collider == null)
+            return;
+
+        onWin?.Invoke();
     }
 
     void CheckPlayerInside()
