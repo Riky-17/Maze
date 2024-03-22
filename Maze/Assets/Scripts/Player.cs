@@ -15,12 +15,16 @@ public class Player : MonoBehaviour
     float rotationSpeed = 6;
     float RotationVelocity => rotationSpeed * 90; //90 stands for the degrees
     int signalsAmount;
+    bool isPlayerInsideMaze = false;
     
     void Awake()
     {
         rb = GetComponent<Rigidbody2D>();
         signalsAmount = (int)(Mathf.Round(GameManager.Instance.MazeHeight * GameManager.Instance.MazeWidth / 50f / 5) * 5);
     }
+
+    void OnEnable() => MazeGenerator.onPlayerInside += SetPlayerInside;
+    void OnDisable() => MazeGenerator.onPlayerInside -= SetPlayerInside;
 
     void Start()
     {
@@ -32,7 +36,7 @@ public class Player : MonoBehaviour
         CheckMoveInput();
         if(moveDir != Vector2.zero)
             RotatePlayer();
-        if(Input.GetKeyDown(KeyCode.Space) && MazeGenerator.Instance.IsPlayerInside)
+        if(Input.GetKeyDown(KeyCode.Space) && isPlayerInsideMaze)
             PlaceSignal();
     }
 
@@ -76,4 +80,6 @@ public class Player : MonoBehaviour
 
         moveDir = inputDir.normalized;
     }
+
+    void SetPlayerInside() => isPlayerInsideMaze = true;
 }

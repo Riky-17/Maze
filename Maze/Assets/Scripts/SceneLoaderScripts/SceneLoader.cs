@@ -6,6 +6,7 @@ using UnityEngine.SceneManagement;
 public static class SceneLoader
 {
     static Scenes sceneToLoad;
+    public static Scenes CurrentScene {get; private set;} = Scenes.MainMenu;
     const string LOADING_SCREEN_SCENE = "LoadingScreen";
 
     public static void LoadScene(Scenes scene)
@@ -14,7 +15,11 @@ public static class SceneLoader
         SceneManager.LoadScene(LOADING_SCREEN_SCENE);
     }
 
-    public static void LoadingScreenCallBack() => SceneManager.LoadScene(sceneToLoad.ToString());
+    public static void LoadingScreenCallBack()
+    {
+        CurrentScene = sceneToLoad;
+        SceneManager.LoadScene(sceneToLoad.ToString());
+    }
 }
 
 public enum Scenes

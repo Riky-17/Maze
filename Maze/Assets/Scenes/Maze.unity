@@ -2377,13 +2377,14 @@ GameObject:
   - component: {fileID: 1389215452}
   - component: {fileID: 1389215454}
   - component: {fileID: 1389215453}
+  - component: {fileID: 1389215455}
   m_Layer: 5
   m_Name: Victory Screen
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!224 &1389215452
 RectTransform:
   m_ObjectHideFlags: 0
@@ -2443,6 +2444,19 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1389215451}
   m_CullTransparentMesh: 1
+--- !u!114 &1389215455
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1389215451}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 02a24e6f192e196448755f7c72ae428d, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  timerText: {fileID: 2144263039}
 --- !u!1 &1480496540
 GameObject:
   m_ObjectHideFlags: 0

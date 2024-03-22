@@ -7,6 +7,7 @@ public class MazeGenerator : MonoBehaviour
 {
     public static MazeGenerator Instance {get; private set;}
 
+    public static event Action onPlayerInside;
     public static event Action onWin;
 
     [SerializeField] MazeCell[] mazeCellPrefabs;
@@ -22,7 +23,7 @@ public class MazeGenerator : MonoBehaviour
     Stack<MazeCell> currentPath;
     List<MazeCell> completedPath;
 
-    public bool IsPlayerInside {get; private set;} = false;
+    public bool isPlayerInside = false;
 
     void Awake()
     {
@@ -43,7 +44,7 @@ public class MazeGenerator : MonoBehaviour
 
     void FixedUpdate()
     {
-        if(!IsPlayerInside)
+        if(!isPlayerInside)
             CheckPlayerInside();
 
         CheckExit();
@@ -138,7 +139,8 @@ public class MazeGenerator : MonoBehaviour
             entranceCell = mazeGrid[entranceCellx, 0];
             PlaceWalls(entranceCell, 2);
         }
-        IsPlayerInside = true;
+        isPlayerInside = true;
+        onPlayerInside?.Invoke();
     }
 
     void FixEdgeWalls(MazeCell cell)
