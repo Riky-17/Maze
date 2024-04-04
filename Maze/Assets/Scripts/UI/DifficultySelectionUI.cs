@@ -7,6 +7,7 @@ public class DifficultySelectionUI : MonoBehaviour
 {
     [SerializeField] GameObject startingScreen;
     [SerializeField] GameObject customSizeScreen;
+    [SerializeField] GameObject canvas;
 
     [SerializeField] Button easyButton;
     [SerializeField] Button mediumButton;
@@ -19,19 +20,22 @@ public class DifficultySelectionUI : MonoBehaviour
         easyButton.onClick.AddListener(() =>
         {
             GameManager.Instance.SetDifficulty(Difficulties.Easy);
-            SceneLoader.LoadScene(Scenes.Maze);
+            canvas.SetActive(false);
+            SceneLoader.Instance.LoadScene(Scenes.Maze);
         });
         
         mediumButton.onClick.AddListener(() =>
         {
             GameManager.Instance.SetDifficulty(Difficulties.Medium);
-            SceneLoader.LoadScene(Scenes.Maze);
+            canvas.SetActive(false);
+            SceneLoader.Instance.LoadScene(Scenes.Maze);
         });
         
         hardButton.onClick.AddListener(() =>
         {
             GameManager.Instance.SetDifficulty(Difficulties.Hard);
-            SceneLoader.LoadScene(Scenes.Maze);
+            canvas.SetActive(false);
+            SceneLoader.Instance.LoadScene(Scenes.Maze);
         });
         
         customButton.onClick.AddListener(() =>

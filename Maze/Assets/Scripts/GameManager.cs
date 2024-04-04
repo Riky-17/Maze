@@ -46,7 +46,7 @@ public class GameManager : MonoBehaviour
 
     void Update()
     {
-        if(SceneLoader.CurrentScene == Scenes.MainMenu)
+        if(SceneLoader.Instance.CurrentScene == Scenes.MainMenu)
             return;
 
         if(Input.GetKeyDown(KeyCode.Escape) && (state == GameStates.PlayerInside || state == GameStates.PlayerOutside))

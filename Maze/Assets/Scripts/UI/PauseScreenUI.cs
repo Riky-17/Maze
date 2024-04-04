@@ -17,7 +17,7 @@ public class PauseScreenUI : MonoBehaviour
     
         MainMenuButton.onClick.AddListener(() =>
         {
-            SceneLoader.LoadScene(Scenes.MainMenu);
+            SceneLoader.Instance.LoadScene(Scenes.MainMenu);
         });
     }
 }

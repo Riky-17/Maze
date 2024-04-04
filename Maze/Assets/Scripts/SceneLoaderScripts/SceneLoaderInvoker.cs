@@ -11,7 +11,7 @@ public class SceneLoaderInvoker : MonoBehaviour
         if (firstUpdate)
         {
             firstUpdate = false;
-            SceneLoader.LoadingScreenCallBack();
+            //SceneLoader.Instance.LoadingScreenCallBack();
         }
     }
 }

@@ -2,23 +2,47 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.SceneManagement;
+using UnityEngine.UI;
 
-public static class SceneLoader
+public class SceneLoader : MonoBehaviour
 {
-    static Scenes sceneToLoad;
-    public static Scenes CurrentScene {get; private set;} = Scenes.MainMenu;
-    const string LOADING_SCREEN_SCENE = "LoadingScreen";
+    public static SceneLoader Instance {get; private set;}
 
-    public static void LoadScene(Scenes scene)
+    [SerializeField] GameObject loadingScreenCanvas;
+    [SerializeField] Image loadingBar;
+    Scenes sceneToLoad;
+    public Scenes CurrentScene {get; private set;} = Scenes.MainMenu;
+
+    void Awake()
     {
-        sceneToLoad = scene;
-        SceneManager.LoadScene(LOADING_SCREEN_SCENE);
+        if(Instance == null)
+            Instance = this;
+        else
+            Destroy(gameObject);
+        DontDestroyOnLoad(gameObject);
+        DontDestroyOnLoad(loadingScreenCanvas);
     }
 
-    public static void LoadingScreenCallBack()
+    public void LoadScene(Scenes scene)
     {
+        sceneToLoad = scene;
+        StartCoroutine(LoadSceneAsync(scene));
+    }
+
+    IEnumerator LoadSceneAsync(Scenes scene)
+    {
+        loadingScreenCanvas.SetActive(true);
+        AsyncOperation loadingOperation = SceneManager.LoadSceneAsync(scene.ToString());
+
+        while (!loadingOperation.isDone)
+        {
+            loadingBar.fillAmount = loadingOperation.progress;
+            Debug.Log(loadingOperation.progress);
+            Debug.Log(loadingBar.fillAmount);
+            yield return null;
+        }
+        loadingScreenCanvas.SetActive(false);
         CurrentScene = sceneToLoad;
-        SceneManager.LoadScene(sceneToLoad.ToString());
     }
 }
 

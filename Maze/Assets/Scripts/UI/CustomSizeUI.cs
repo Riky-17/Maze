@@ -7,6 +7,7 @@ using TMPro;
 public class CustomSizeUI : MonoBehaviour
 {
     [SerializeField] GameObject difficultySelectionScreen;
+    [SerializeField] GameObject canvas;
     [SerializeField] TMP_InputField mazeWidthInput;
     [SerializeField] TMP_InputField mazeHeightInput;
     [SerializeField] Button startGameButton;
@@ -27,7 +28,8 @@ public class CustomSizeUI : MonoBehaviour
             int mazeHeight = Mathf.Clamp(int.Parse(mazeHeightInput.text), 5, 150);
             GameManager.Instance.SetDifficulty(Difficulties.Custom);
             GameManager.Instance.SetCustomSize(mazeWidth, mazeHeight);
-            SceneLoader.LoadScene(Scenes.Maze);
+            canvas.SetActive(false);
+            SceneLoader.Instance.LoadScene(Scenes.Maze);
         });
 
         backButton.onClick.AddListener(() => 
