@@ -10,7 +10,7 @@ public class SceneLoader : MonoBehaviour
 
     [SerializeField] GameObject loadingScreenCanvas;
     [SerializeField] Image loadingBar;
-    Scenes sceneToLoad;
+
     public Scenes CurrentScene {get; private set;} = Scenes.MainMenu;
 
     void Awake()
@@ -23,27 +23,24 @@ public class SceneLoader : MonoBehaviour
         DontDestroyOnLoad(loadingScreenCanvas);
     }
 
-    public void LoadScene(Scenes scene)
-    {
-        sceneToLoad = scene;
-        StartCoroutine(LoadSceneAsync(scene));
-    }
-
     IEnumerator LoadSceneAsync(Scenes scene)
     {
         loadingScreenCanvas.SetActive(true);
         AsyncOperation loadingOperation = SceneManager.LoadSceneAsync(scene.ToString());
 
+        loadingOperation.allowSceneActivation = scene != Scenes.Maze;
+
         while (!loadingOperation.isDone)
         {
             loadingBar.fillAmount = loadingOperation.progress;
-            Debug.Log(loadingOperation.progress);
-            Debug.Log(loadingBar.fillAmount);
             yield return null;
         }
-        loadingScreenCanvas.SetActive(false);
-        CurrentScene = sceneToLoad;
+        Debug.Log("done");
+        // loadingScreenCanvas.SetActive(false);
+        CurrentScene = scene;
     }
+
+    public void LoadScene(Scenes scene) => StartCoroutine(LoadSceneAsync(scene));
 }
 
 public enum Scenes
