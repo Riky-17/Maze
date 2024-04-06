@@ -1,6 +1,4 @@
 using System;
-using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 
 public class GameManager : MonoBehaviour
@@ -78,6 +76,8 @@ public class GameManager : MonoBehaviour
     {
         this.difficulty = difficulty;
         state = GameStates.PlayerOutside;
+        Time.timeScale = 1;
+        ElapsedTime = 0;
         if(difficulty == Difficulties.Custom)
             return;
         SetMazeSize();

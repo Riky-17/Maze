@@ -1,6 +1,4 @@
 using System;
-using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 
 public class Player : MonoBehaviour
@@ -21,6 +19,7 @@ public class Player : MonoBehaviour
     {
         rb = GetComponent<Rigidbody2D>();
         signalsAmount = (int)(Mathf.Round(GameManager.Instance.MazeHeight * GameManager.Instance.MazeWidth / 50f / 5) * 5);
+        signalsAmount = Mathf.Clamp(signalsAmount, 3, 50);
     }
 
     void OnEnable() => MazeGenerator.onPlayerInside += SetPlayerInside;

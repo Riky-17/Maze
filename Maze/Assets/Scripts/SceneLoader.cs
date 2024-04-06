@@ -1,5 +1,4 @@
 using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 using UnityEngine.UI;
@@ -27,16 +26,12 @@ public class SceneLoader : MonoBehaviour
     {
         loadingScreenCanvas.SetActive(true);
         AsyncOperation loadingOperation = SceneManager.LoadSceneAsync(scene.ToString());
-
-        loadingOperation.allowSceneActivation = scene != Scenes.Maze;
-
         while (!loadingOperation.isDone)
         {
             loadingBar.fillAmount = loadingOperation.progress;
             yield return null;
         }
-        Debug.Log("done");
-        // loadingScreenCanvas.SetActive(false);
+        loadingScreenCanvas.SetActive(false);
         CurrentScene = scene;
     }
 

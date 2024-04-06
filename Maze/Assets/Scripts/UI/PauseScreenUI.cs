@@ -1,10 +1,9 @@
-using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
 
 public class PauseScreenUI : MonoBehaviour
 {
+    [SerializeField] GameObject canvas;
     [SerializeField] Button resumeButton;
     [SerializeField] Button MainMenuButton;
 
@@ -17,6 +16,8 @@ public class PauseScreenUI : MonoBehaviour
     
         MainMenuButton.onClick.AddListener(() =>
         {
+            GameManager.Instance.TogglePause();
+            canvas.SetActive(false);
             SceneLoader.Instance.LoadScene(Scenes.MainMenu);
         });
     }
